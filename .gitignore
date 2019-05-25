@@ -1,0 +1,14 @@
+# Mac OS
+.DS_Store
+
+# Keynotes
+*.key
+
+# Python
+__pycache__/
+.pyc
+
+# Emacs
+*~
+*\#*   
+*.\#*
