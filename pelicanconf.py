@@ -6,8 +6,6 @@ AUTHOR = 'aphasiayc'
 SITENAME = 'Notes'
 SITEURL = ''
 
-PATH = 'content'
-
 TIMEZONE = 'Asia/Shanghai'
 
 DEFAULT_LANG = 'en'
@@ -20,8 +18,16 @@ TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
+# File paths
+PATH = 'content'
+STATIC_PATHS = ['os']
+ARTICLE_PATHS = ['os']
+ARTICLE_SAVE_AS = '{date:%Y}/{slug}.html'
+ARTICLE_URL = '{date:%Y}/{slug}.html'
+
 # Blogroll
 LINKS = (('Pelican', 'http://getpelican.com/'), )
+
 # Social widget
 SOCIAL = (('github', 'https://github.com/aphasiayc'),)
 
