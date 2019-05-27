@@ -1,7 +1,7 @@
 title: xv6: address space
 category: operating systems
 
-所谓“地址空间”是对于物理内存的一种抽象，它所描述的是一个应用程序所看到的内存分配状况。xv6主要依靠分页的办法来管理内存，通过建立分页表来为应用程序配置地址空间。每个进程各自维护一张独立的分页表，从而实现它们相互之间的内存隔离。进程内部则通过将地址空间切分user和kernel两个部分来实现权限的分级管理。
+所谓“地址空间”是对于物理内存的一种抽象，它所描述的是一个应用程序所看到的系统内存分配状况。xv6的内存管理主要依靠分页的办法，通过分页表来为应用程序配置地址空间。每个进程各自维护一张独立的分页表，从而实现进程之间的内存隔离。进程内部则通过将地址空间切分user和kernel两个部分来实现权限的分级管理。
 
 ## 机制
 
@@ -42,17 +42,15 @@ category: operating systems
 
 x86的segment机制中就包含权限控制，segment selector和segment descriptor中都包含用以标示权限的标志位privilege level(PL)。PL通常占用2个比特位，原则上可以标识4种不同的权限等级。xv6只使用了其中的两个等级：0（kernel mode）和3（user mode）。一些关键的操作（例如异常处理、硬件I/O、system call）只能在kernel mode中进行。
 
-但事实上xv6在内存管理上几乎不依赖segment机制，SDT中设定的各个全局segment descriptor（code、stack、data等）都覆盖了[0, 4 GB）的线性地址空间。内存权限保护是通过分页表PTE中的特殊标志位`PTE_U`来实现。只用当`PTE_U`设置为1时，对应的地址空间才允许在user mode下访问。
+但事实上xv6在内存管理上几乎不依赖segment机制，SDT中设定的各个全局segment descriptor（code、stack、data等）都覆盖了[0, 4 GB）的线性地址空间。权限保护是通过分页表PTE中的特殊标志位`PTE_U`来实现。只用当`PTE_U`设置为1时，对应的地址空间才允许在user mode下访问。
 
 ### 分配模型
 
-xv6中每一个进程各自维护一张分页表，各个进程拥有4 GB的独立地址空间，进程间相互隔离。
-
-用户进程通常运行在user mode下，当程序需要进行I/O、异常处理等操作时，需要通过中断机制进入kernel mode，转而执行kernel预设的一段指令（interrupt handlers）。于此相应，xv6中每个进程的地址空间都包含user（0 ~ 2 GB）和kernel（2 ～ 4 GB）两部分，地址空间分配如下图所示。
+xv6中每个进程都独立拥有4 GB的独立地址空间，其中包括user[0 ~ 2 GB)和kernel[2 ～ 4 GB)两部分，地址空间分配如下图所示。
 
 ![model]({attach}images/address.002.png)
 
-与两种权限等级相对应，每个进程都拥有两个栈：user stack和kernel stack。
+用户进程通常运行在user mode下，使用user部分的地址空间。当程序需要进行I/O、异常处理等操作时，进程通过中断机制提升权限进入kernel mode，转而执行kernel中预设的指令（interrupt handlers）。与两种权限等级相对应，每个进程都拥有两个栈：user stack和kernel stack。
 
 ## 实现
 
@@ -75,7 +73,7 @@ struct {
 
 - allocate a page
 
-`kalloc`取出`freelist`中的第一个可用分页外部程序使用，同时令`freelist`指向下一个可用分页。
+当程序需要更多内存的时候，kernel通过`kalloc`取出`freelist`中的第一个分页以供使用，同时令`freelist`指向下一个可用分页。
 
 ```c
 char* kalloc(void) {
@@ -132,7 +130,7 @@ void freerange(void *vstart, void *vend) {
 }
 ```
 
-xv6在main函数中通过`freerange`将kernel的`end`到`P2V(PHYSTOP)`之间的VA区间切分成大小为4 kB的小段，依次插入到`freelist`中。`PHYSTOP`的值为0xe000000，xv6实际可以操作的地址空间小于224 MB。
+`freerange`在初始化的过程中非常有用。xv6在main函数中就通过`freerange`将kernel的`end`到`P2V(PHYSTOP)`之间的VA区间切分成大小为4 kB的小段，依次插入到`freelist`中。`PHYSTOP`的值为0xe000000，xv6实际可以操作的地址空间小于224 MB。
 
 `kmem`直接操作的VA，实际上管理的是PA。
 
@@ -140,9 +138,13 @@ xv6在main函数中通过`freerange`将kernel的`end`到`P2V(PHYSTOP)`之间的V
 
 `mappages`的作用是在分页表`pgdir`中设置虚拟地址到物理地址的对应关系。它将从`va`开始的一段长度为`size`的连续虚拟地址空间映射到与之对应的从`pa`开始的一段物理地址空间。
 
-`mappages`通过`walkpgdir`来查找虚拟地址`va`对应的PTE。`walkpgdir`首先根据`PDX(va)`查找`va`在初级分页表`pgdir`中对应的PDE，读取对应二级分页表的物理地址。如果对应的二级分页表不存在，则通过`kalloc`申请一个新的内存页。然后根据`PTX(va)`查找`va`在二级分页表中对应的PTE。
+`mappages`通过`walkpgdir`来查找虚拟地址`va`对应的PTE。`walkpgdir`的流程是：
 
-`walkpgdir`返回与`va`对应PTE，然后`mappages`将`pa`写入到PTE的PPN中，并设置`PTE_P`标记位，标示这段地址已经被占用。
+- 首先根据`PDX(va)`查找`va`在初级分页表`pgdir`中对应的PDE，读取对应二级分页表的物理地址
+- 如果对应的二级分页表不存在并且参数`alloc`设为1时，就通过`kalloc`申请一个新的内存页
+- 然后根据`PTX(va)`查找`va`在二级分页表中对应的PTE并返回
+
+`walkpgdir`最后返回与`va`对应PTE，然后`mappages`将`pa`写入到PTE的PPN中，并设置`PTE_P`标记位，标示这段地址已经被占用。
 
 ```c
 // vm.c
@@ -232,7 +234,7 @@ pde_t* setupkvm(void) {
 }
 ```
 
-`setupkvm`返回一个PDT的地址`pgdir`。其中kernel部分（2 GB以上）的地址空间已经设置完毕，user部分（2 GB以下）空白。
+`setupkvm`返回一个PDT的地址`pgdir`。其中user部分（2 GB以下）为空白，kernel部分（2 GB以上）的地址空间已经设置完毕。此处一个细节是，`setupkvm`将`kmap`所描述的完整的物理内存空间（从0到`PHYSTOP`，以及`DEVSPACE`)都加载进了`pdgir`的kernel部分，因而此后当kernel通过`kalloc`获得新的内存页时，不需要更新分页表。与之对应，当user程序申请更多分页时（经由名为`sbrk`的system call实现），每次都需要调用`mappages`来将新的分页设置到`pgdir`的user部分中（具体见下一节`allocuvm`函数）。
 
 ### user地址空间
 
@@ -263,7 +265,7 @@ int allocuvm(pde_t *pgdir, uint oldsz, uint newsz) {
 }
 ```
 
-在申请足够的地址空间之后，`loaduvm`在`pgdir`中找到相应的PTE，读取`PA`，并通过`readi`将硬盘上的可执行文件（elf）载入内存。
+在申请足够的地址空间之后，`loaduvm`在`pgdir`中找到相应的PTE，读取其中的PPN，并通过`readi`将硬盘上的可执行文件（elf）载入这个地址。
 
 ```c
 int loaduvm(pde_t *pgdir, char *addr, struct inode *ip, uint offset, uint sz) {
@@ -324,7 +326,7 @@ bad:
 }
 ```
 
-值得注意的是，xv6将kernel的指令和数据加载到了每一个进程的地址空间中。这样当应用程序需要使用某些kernel的功能时，就不需要额外执行一次切换分页表的操作，从而节省了CPU时间。尽管如此，应用程序并不能直接调用kernel中的函数。这是因为应用程序通常运行在user mode下，而kernel中的函数必须在权限等级更高的kernel mode中才能执行。此时应用程序需要借助“中断”机制来提升权限。
+最后值得注意的是，xv6将kernel的指令和数据加载到了每一个进程的地址空间中。这样设计的用意是当应用程序需要使用某些kernel的功能时，就不需要额外执行一次切换分页表的操作，从而节省了CPU时间。尽管如此，应用程序并不能直接调用kernel中的函数。这是因为应用程序通常运行在user mode下，而kernel中的函数必须在权限等级更高的kernel mode中才能执行。此时应用程序需要借助“中断”机制来提升权限。
 
 ---
 #### 参考

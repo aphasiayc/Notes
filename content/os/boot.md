@@ -39,7 +39,7 @@ protected mode引入了segment descriptor。一个segment descriptor长度为64�
 - 20-bit length limit，limit所标示的长度以4 kB为单位（2<sup>12</sup> bit），因此一个segment最长可达4 GB（2<sup>12</sup>&times;2<sup>20</sup> bit）
 - some flags: 2-bit descriptor privilege level（DPL）
 
-若干segment descriptor组成一个segment descriptor table（SDT），它的起始地址储存在%gdtr或%ldtr中。
+若干segment descriptor组成一个segment descriptor table（SDT）。系统启动时在内存中划分出一段区间用以保存SDT，并且将它的起始物理地址储存在%gdtr或%ldtr中。
 
 ![segment descriptor and selector]({attach}images/boot.002.png)
 
