@@ -1,6 +1,6 @@
 title: xv6: how kernel boots
 category: operating systems
-date: 2019-05-26
+date: 2019-05-26 15:15
 
 通常当我们运行某个程序的时候，其实是kernel替我们在运行它，包括启动程序、维护它的状态，以及在结束后清理现场等。这当中的一个问题是，kernel本身作为一个（特殊的）程序是如何启动的？
 

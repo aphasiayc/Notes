@@ -1,10 +1,12 @@
 title: xv6: minimal assembly
 category: operating systems
-date: 2019-05-25
+date: 2019-05-25 16:38
 
 和现代操作系统比起来，xv6基本只能算是个复古风格的玩具模型。它仿照unix version 6设计，不涉及现代操作系统中各种复杂的优化。但好处是简单明了，码工精美，十分适合拿来给我等（挑战linux kernel失败的）初级选手作入门教程。
 
-xv6适用于多核x86系统，主要使用ANSI C（以及少量AT&T风格的汇编语言）编码。我在阅读源码过程中最初的障碍来源于对硬件和汇编的无知，所以在此先补一篇相关基础知识的笔记。
+这一系列主要的参考资料是xv6自带说明书[Xv6, a simple Unix-like teaching operating system](https://pdos.csail.mit.edu/6.828/2018/xv6.html)以及更形而上一点的[Operating Systems: Three Easy Pieces](http://pages.cs.wisc.edu/~remzi/OSTEP/)（OSTEP）。
+
+xv6适用于多核x86系统，主要使用ANSI C（以及少量AT&T风格的汇编语言）编码。我在阅读源码过程中最初的障碍来源于对硬件和汇编的无知，所以就从相关基础知识开始吧。
 
 ## 寄存器
 
@@ -175,4 +177,3 @@ C语言的函数调用过程将栈切分成若干frame，每个函数各自维�
 
 1. [x86 Assembly Guide](http://flint.cs.yale.edu/cs421/papers/x86-asm/asm.html)
 2. [xv6 Book](https://pdos.csail.mit.edu/6.828/2012/xv6/book-rev7.pdf)
-
