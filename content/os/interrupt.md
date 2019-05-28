@@ -12,13 +12,13 @@ date: 2019-05-28 10:47
 
 ### exceptions
 
-exceptions主要有两种来源，一种是程序在执行某个指令时抛出异常，按照处理方式的不同又分为三种：
+exceptions主要有两种来源，一种是处理器在执行某个指令时抛出异常，按照处理方式的不同又分为三种：
 
 - fault：通常是遇到了某些可以修复的错误，所以在中断返回之后重新执行当前指令。
 - trap：很多情况下是由用于调试，中断返回之后将顺序执行下一条指令
 - abort：遇到了严重的、不可修复的问题，系统将终止当前进程
 
-另一种来源是程序通过`int`或者类似的指令主动发起中断。这相当于处理器给自己发出了一个中断信号，所以也被称为“software interrupts”。xv6中的system call就属于这个分类。software interrupts的处理方式与trap类似，返回之后顺序执行下一条指令。
+另一种来源是程序通过`int`或者类似的指令主动发起中断。这相当于处理器给自己发出了一个中断信号，所以也被称为“software interrupts”。xv6中的system call就属于这个类型。software interrupts的处理方式与trap类似，返回之后顺序执行下一条指令。
 
 ### interrupts
 
@@ -46,12 +46,14 @@ gate就进入中断后是否将`IF`标志位置零分为两种：interrupt gate(
 
 ### privilege level
 
-gate中其实包括了两个与权限控制相关的标志位：gate自身的DPL，以及segment selector的DPL。gate的DPL表示的是发起中断所必须的权限，而segment selector的DPL是执行interrupt handler时所需要的权限。xv6中所有interrupt handler都需要在kernel mode下执行，于是segment selector的DPL都为0。但gate的DPL可以不为零，例如xv6中的system call就是程序在user mode中发起中断，要求kernel提供某些服务，因此相应gate的DPL应当设为3。
+gate中其实包括了两个与权限控制相关的标志位：gate自身的DPL，以及segment selector的DPL。gate的DPL表示的是发起中断所必须的权限，而segment selector的DPL是执行interrupt handler时所需要的权限。
 
-考虑权限检查，中断的处理流程如下：
+xv6中所有interrupt/exception handler都需要在kernel mode下执行，于是segment selector的DPL都为0。但gate的DPL可以不为零，例如xv6中的system call就是程序在user mode中发起中断，要求kernel提供某些服务，因此相应gate的DPL应当设为3。另一方面处理器在发生错误抛出异常时会进入kernel mode，相应gate中的DPL通常设为0。
+
+考虑权限检查，发生中断的处理流程如下：
 
 1. 根据中断的类型找到IDT中相应的gate
-2. 比较gate的DPL和当前CPU的权限CPL（即当前%cs所指示的segment descriptor中的DPL）。由于privilege level取值越小表示权限越高，如果DPL&lt;CPL，则没有权限发起指定中断。在xv6中进程会直接被终止，但一般来说处理这种情况的方法是再发起一个exception，“general protection fault”。
+2. 比较gate的DPL和当前CPU的权限CPL（即当前%cs所指示的segment descriptor中的DPL）。由于privilege level取值越小表示权限越高，如果DPL&lt;CPL，则没有权限发起指定中断。
 3. 比较gate的DPL和gate中segement selector的DPL已决定是否需要进行权限提升。这个过程需要借助于[task state segment](#task-state-segment)
 4. 备份当前%eflags、%cs和%eip的状态
 5. 读取gate中的segment selector，据此去GDT中查找对应segment descriptor，获得segment base和segment limit
