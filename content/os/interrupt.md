@@ -1,5 +1,6 @@
 title: xv6: interrupts
 category: operating systems
+date: 2019-05-28
 
 xv6中3种常见的中断机制：system call，exception，device notification。
 

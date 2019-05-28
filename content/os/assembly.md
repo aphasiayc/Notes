@@ -1,5 +1,6 @@
 title: xv6: minimal assembly
 category: operating systems
+date: 2019-05-25
 
 和现代操作系统比起来，xv6基本只能算是个复古风格的玩具模型。它仿照unix version 6设计，不涉及现代操作系统中各种复杂的优化。但好处是简单明了，码工精美，十分适合拿来给我等（挑战linux kernel失败的）初级选手作入门教程。
 
