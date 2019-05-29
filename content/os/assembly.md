@@ -6,7 +6,19 @@ date: 2019-05-25 16:38
 
 这一系列主要的参考资料是xv6自带说明书[Xv6, a simple Unix-like teaching operating system](https://pdos.csail.mit.edu/6.828/2018/xv6.html)以及更形而上一点的[Operating Systems: Three Easy Pieces](http://pages.cs.wisc.edu/~remzi/OSTEP/)（OSTEP）。
 
-xv6适用于多核x86系统，主要使用ANSI C（以及少量AT&T风格的汇编语言）编码。我在阅读源码过程中最初的障碍来源于对硬件和汇编的无知，所以就从相关基础知识开始吧。
+xv6适用于多核x86系统，主要使用ANSI C（以及少量AT&T风格的汇编语言）编码。我在阅读源码过程中最初的障碍来源于对硬件和汇编的无知，所以就从相关基础知识开始。
+
+xv6系列包括：
+
+1. [minimal assembly]({filename}/os/assembly.md)
+2. [how system boots]({filename}/os/boot.md)
+3. [address space]({filename}/os/address.md)
+4. [interrupts]({filename}/os/interrupt.md)
+5. [system calls]({filename}/os/syscall.md)
+6. [process]({filename}/os/process.md)
+7. [context switch]({filename}/os/switch.md)
+8. [synchronization]({filename}/os/sync.md)
+9. [system initialization]({filename}/os/init.md)
 
 ## 寄存器
 

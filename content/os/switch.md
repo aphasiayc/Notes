@@ -4,6 +4,18 @@ date: 2019-05-29 16:20
 
 通常应用程序都运行在某个进程中，但kernel不同。kernel并不对应任何进程，它的工作是建立关于进程的抽象，创建并管理各个进程。kernel一个至关重要的功能是在实现进程之间切换。由kernel来调配各个应用程序的运行时间，可以防止程序过多（甚至是恶意）地占用系统资源。另外kernel在当前进程需要进行I/O等可能引起阻塞的操作时，可以选择将它挂起转而执行其他的进程，以避免在等待的过程中浪费过多的CPU时间。
 
+xv6系列第7篇，其他还包括：
+
+1. [minimal assembly]({filename}/os/assembly.md)
+2. [how system boots]({filename}/os/boot.md)
+3. [address space]({filename}/os/address.md)
+4. [interrupts]({filename}/os/interrupt.md)
+5. [system calls]({filename}/os/syscall.md)
+6. [process]({filename}/os/process.md)
+7. [context switch]({filename}/os/switch.md)
+8. [synchronization]({filename}/os/sync.md)
+9. [system initialization]({filename}/os/init.md)
+
 ## 基础设施
 
 ### per-CPU state

@@ -4,6 +4,18 @@ date: 2019-05-29 10:17
 
 根据`OSTEP`的说法，操作系统最关键的3个要素是virtualization、concurrency和persistence。关于进程的抽象是第一个关键要素virtualization的核心，是第二个关键要素concurrency的基础。进程之间通过时间分片各自独立地占有处理器，通过维护各自的分页表拥有独立的地址空间。
 
+这是xv6系列的第6篇。以下是xv6系列的目录：
+
+1. [minimal assembly]({filename}/os/assembly.md)
+2. [how system boots]({filename}/os/boot.md)
+3. [address space]({filename}/os/address.md)
+4. [interrupts]({filename}/os/interrupt.md)
+5. [system calls]({filename}/os/syscall.md)
+6. [process]({filename}/os/process.md)
+7. [context switch]({filename}/os/switch.md)
+8. [synchronization]({filename}/os/sync.md)
+9. [system initialization]({filename}/os/init.md)
+
 ## 数据结构
 
 ### 进程

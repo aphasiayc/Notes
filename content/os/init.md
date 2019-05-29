@@ -4,6 +4,18 @@ date: 2019-05-29 18:11
 
 在boot流程结束，控制流进入`main`函数的时候，只有唯一的Bootstrap Processor（BSP）在工作，使用`entrypgdir`作为分页表，可以操作的物理地址空间是[0, 4 MB)。`main`将进行一系列的初始化操作，在它结束的时候，其他所有的Application Processor（AP）都已经启动，关于进程的抽象已经建立，系统的第一个进程`console`也已经在运行中。
 
+暂时来说这是xv6系列的最后一篇了。系列目录：
+
+1. [minimal assembly]({filename}/os/assembly.md)
+2. [how system boots]({filename}/os/boot.md)
+3. [address space]({filename}/os/address.md)
+4. [interrupts]({filename}/os/interrupt.md)
+5. [system calls]({filename}/os/syscall.md)
+6. [process]({filename}/os/process.md)
+7. [context switch]({filename}/os/switch.md)
+8. [synchronization]({filename}/os/sync.md)
+9. [system initialization]({filename}/os/init.md)
+
 ### 4 MB过渡空间
 
 main函数首先将单级分页、分页粒度为4 MB的`entrypgdir`切换到更为精细的支持二级分页、分页粒度为4 kB的`kpgdir`。

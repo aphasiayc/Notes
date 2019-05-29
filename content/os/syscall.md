@@ -4,6 +4,18 @@ date: 2019-05-28 11:17
 
 一种重要的中断机制是应用程序发起system call，要求kernel提供某些服务。xv6中各种涉及资源分配的操作，比如读写硬盘、申请新的内存空间等，都必须在kernel mode下进行，运行在user mode下的应用程序没有足够操作的权限。对此，xv6的办法是由kernel提供一些预设的system call，用户程序通过IDT中的特殊gate，`T_SYSCALL`发起中断。`T_SYSCALL`允许user mode下的调用，在执行`int`指令的过程中进行提权进入kernel mode，然后由kenrel执行指定的操作。
 
+这是xv6系列的第5篇。系列包括：
+
+1. [minimal assembly]({filename}/os/assembly.md)
+2. [how system boots]({filename}/os/boot.md)
+3. [address space]({filename}/os/address.md)
+4. [interrupts]({filename}/os/interrupt.md)
+5. [system calls]({filename}/os/syscall.md)
+6. [process]({filename}/os/process.md)
+7. [context switch]({filename}/os/switch.md)
+8. [synchronization]({filename}/os/sync.md)
+9. [system initialization]({filename}/os/init.md)
+
 ## 执行路径
 
 xv6预设了一个系统函数表`syscalls`，将syscall number对应到具体的kernel中定义函数（函数体在sysproc.c、sysfile.c等文件中）：

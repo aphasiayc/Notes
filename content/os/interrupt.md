@@ -6,6 +6,18 @@ date: 2019-05-28 10:47
 
 中断是CPU和外部硬件设备之间，以及多核系统中各个CPU之间通信的一种重要的方式。在xv6中，它为kernel和user程序之间的交互提供了底层机制。
 
+这是xv6系列的第4篇。这个系列包括：
+
+1. [minimal assembly]({filename}/os/assembly.md)
+2. [how system boots]({filename}/os/boot.md)
+3. [address space]({filename}/os/address.md)
+4. [interrupts]({filename}/os/interrupt.md)
+5. [system calls]({filename}/os/syscall.md)
+6. [process]({filename}/os/process.md)
+7. [context switch]({filename}/os/switch.md)
+8. [synchronization]({filename}/os/sync.md)
+9. [system initialization]({filename}/os/init.md)
+
 ## 中断的分类
 
 中断包括了很多类型，表述上又涉及到许多含义有重叠的名词（比如interrupt、trap，以及exception、fault之类）。所以将中断作个分类考察似乎有助于理解。

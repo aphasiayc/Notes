@@ -4,6 +4,18 @@ date: 2019-05-29 17:34
 
 xv6其实并不支持现代操作系统中的“多线程”。但由于kernel部分的地址空间是各个进程共享的，kernel本身还是需要处理进程之间同步的问题。运行在多处理器系统上，各个进程可能同时操作一个内存地址；即使在单处理器的情况下，在中断机制开启，允许切换进程时，也可能发生多个进程交替操作某个内存地址的情况。为此xv6实现了两种基本的进程间同步的模型：mutual exclusion和producer/comsumer。
 
+这是xv6系列的第8篇。其他包括：
+
+1. [minimal assembly]({filename}/os/assembly.md)
+2. [how system boots]({filename}/os/boot.md)
+3. [address space]({filename}/os/address.md)
+4. [interrupts]({filename}/os/interrupt.md)
+5. [system calls]({filename}/os/syscall.md)
+6. [process]({filename}/os/process.md)
+7. [context switch]({filename}/os/switch.md)
+8. [synchronization]({filename}/os/sync.md)
+9. [system initialization]({filename}/os/init.md)
+
 ## mutual exclusion
 
 ### 自旋锁

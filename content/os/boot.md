@@ -14,6 +14,18 @@ date: 2019-05-26 15:15
 
 各个阶段层层递进，每个阶段的工作都为下一个阶段准备了必要的条件。
 
+这是xv6系列的第二篇。xv6系列包括：
+
+1. [minimal assembly]({filename}/os/assembly.md)
+2. [how system boots]({filename}/os/boot.md)
+3. [address space]({filename}/os/address.md)
+4. [interrupts]({filename}/os/interrupt.md)
+5. [system calls]({filename}/os/syscall.md)
+6. [process]({filename}/os/process.md)
+7. [context switch]({filename}/os/switch.md)
+8. [synchronization]({filename}/os/sync.md)
+9. [system initialization]({filename}/os/init.md)
+
 ## BIOS
 
 x86启动时，系统的一个CPU成为Bootstrap Processor(BSP)，运行系统初始化指令。其余CPU都成为Application Processor，等待BSP的信号。
@@ -231,7 +243,7 @@ entry:
 
 ![end of kernel entry]({attach}images/boot.006.png)
 
-`main`函数最主要的工作是启动系统中的第一个进程。“进程”是操作系统中一个及其关键的抽象，但在具体解释它之前我们需要先了解它的一些组成部分，包括地址空间、user mode和kernel mode、中断机制等。
+`main`函数最主要的工作是启动系统中的第一个进程。“进程”是操作系统中一个及其关键的抽象，但在具体解释它之前我们需要先了解它的一些组成部分，包括user mode和kernel mode、[address space]({filename}/os/address.md)、[interrupts]({filename}/os/interrupt.md)机制等。
 
 ---
 #### 参考
